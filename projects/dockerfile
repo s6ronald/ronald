@@ -1,0 +1,36 @@
+# Use an official PostgreSQL client image as the base image
+FROM postgres:latest
+
+# Install required packages
+RUN apt-get update && apt-get install -y awscli
+
+# Set the working directory
+WORKDIR /az
+
+# Copy AWS CLI binaries from a pre-built image
+COPY --from=amazon/aws-cli:latest /usr/local/aws-cli /usr/local/aws-cli
+
+# Add AWS CLI to the PATH
+ENV PATH="/usr/local/aws-cli/bin:${PATH}"
+
+# Copy the script to the /az directory
+COPY script.sh /az/
+RUN chmod +x /az/script.sh
+
+# Set AWS configuration and credentials
+ENV AWS_DEFAULT_REGION='us-east-1'
+ENV AWS_ACCESS_KEY_ID='AKIAZI2LE2Z6CLDSGQZ7'
+ENV AWS_SECRET_ACCESS_KEY='j4lfVWjpnLvWMLdJQ4YiQZ35EGMnoMxQE/XGW6dI'
+ENV BUCKET_NAME='del-db-backup/S6/s6ronald/'
+
+# Configure AWS CLI (replace 'your-access-key' and 'your-secret-key' with your AWS credentials)
+RUN aws configure set aws_access_key_id '$AWS_ACCESS_KEY_ID'
+RUN aws configure set aws_secret_access_key '$AWS_SECRET_ACCESS_KEY'
+RUN aws configure set default.region '$AWS_DEFAULT_REGION' 
+
+# Set the default command to run when the container starts
+ENTRYPOINT ["/az/script.sh"]
+
+
+
+

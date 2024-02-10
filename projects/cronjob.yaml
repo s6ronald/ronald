@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-backup-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: database-backup-container
+            image: devopseasylearning/test:v_07 # Replace with the PostgreSQL image you are using
+            command: ["/bin/sh", "/az/script.sh"]
+            volumeMounts:
+            - name: secret-volume
+              mountPath: /db-credentials-secret
+          restartPolicy: OnFailure
+          volumes:
+          - name: secret-volume
+            secret:
+              secretName: db-credentials-secret
+
+
+

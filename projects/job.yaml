@@ -1,0 +1,11 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restore-database-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: restore-container
+        image: devopseasylearning/s6ronald-restore:v_01  # Replace with your Docker image details
+      restartPolicy: Never
