@@ -8,7 +8,7 @@ packer {
 }
 
 source "amazon-ebs" "ubuntu" {
-  ami_name      = "ubuntu-20.04-s6ronald"
+  ami_name      = "ubuntu-22.04-s6ronald"
   instance_type = "t2.micro"
   region        = "us-east-1"
   source_ami_filter {
@@ -24,12 +24,14 @@ source "amazon-ebs" "ubuntu" {
 }
 
 build {
-  name    = "ubuntu-20.04-s6ronald"
+  name    = "ubuntu-22.04-s6ronald"
   sources = ["source.amazon-ebs.ubuntu"]
   provisioner "shell" {
     inline = [
       "sudo apt-get update",
       "sudo apt-get install -y apt-utils",
+      "sudo apt-get update",
+      "sudo apt-get install -y tree",
       "sudo apt-get install snapd",
       "sudo apt-get update",
       "sudo snap install kubectl --classic",
@@ -41,8 +43,6 @@ build {
       "sudo echo \"deb [signed-by=/usr/share/keyrings/helm-archive-keyring.gpg] https://baltocdn.com/helm/stable/debian/ all main\" | sudo tee /etc/apt/sources.list.d/helm-stable.list > /dev/null",
       "sudo apt-get update",
       "sudo apt-get install -y helm",
-      "sudo apt-get install -y awscli",
-      "sudo apt-get install -y docker-compose",
       "sudo apt-get update",
       "sudo apt-get install -y mysql-server",
       "sudo service mysql start",
@@ -69,6 +69,11 @@ build {
       "sudo apt-get install -y openjdk-11-jre",
       "sudo apt-get install -y python3",
       "sudo apt-get install -y python3-pip",
+      "sudo apt-get install -y awscli",
+      "export PATH=$PATH:$HOME/.local/bin",
+      "pip3 install awscli --upgrade --user",
+      "sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose",  # Install Docker Compose
+      "sudo chmod +x /usr/local/bin/docker-compose",  # Make Docker Compose executable
       "sudo apt-get install -y git",
       "sudo apt-get install -y nodejs",
       "sudo apt-get install -y npm",
